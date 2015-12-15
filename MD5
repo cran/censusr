@@ -1,0 +1,13 @@
+fa653d8ed24156431fd6d98bb6d51dfc *DESCRIPTION
+1ac46594fc074af6ea515630c6df0496 *LICENSE
+ffe42ff5d077e61457b384a4e2ed7227 *NAMESPACE
+f9ad1801814c7c50caed5ecef878f68d *R/call_census_api.R
+665d5d9ec5e153433ecc7ed609765262 *README.md
+a11134b7b27004639305d987d6c6680e *build/vignette.rds
+b8b0abcfa20c49b5c503bca0e398a87c *inst/doc/censusr.R
+ba5ba14ec67dc5a1fa3d56fa86b84eff *inst/doc/censusr.Rmd
+14dc677caeb8e2570d6207402765fdea *inst/doc/censusr.html
+34ad25500fe566afd350d9c8061b618d *man/call_api_once.Rd
+de44610b01927594895e1a2507f3e032 *man/call_census_api.Rd
+3c504fb88b2d083b38d456952f367870 *man/get_geo_url.Rd
+981815ce49edb6c2e2c74cb6abab349f *vignettes/censusr.Rmd
