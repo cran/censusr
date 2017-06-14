@@ -6,7 +6,7 @@
 #' @details See \code{vignette('censusr', package = 'censusr')} for examples.
 #'
 #' @param variables_to_get A character vector of the desired variable names for
-#'   the Census API call, defined at \url{http://api.census.gov/}
+#'   the Census API call, defined at \url{https://www.census.gov/data/developers/data-sets.html}
 #' @param names A character vector of the same length as \code{variables_to_get}
 #'   giving the user-defined names for the variables (optional). Defaults to raw
 #'   API names.
@@ -29,6 +29,7 @@
 #'
 #' @return a data_frame with each requested variable at each requested geography.
 #'
+#' @importFrom stringr str_sub
 #' @export
 call_census_api <- function(variables_to_get,
                             names = NULL,
@@ -36,6 +37,13 @@ call_census_api <- function(variables_to_get,
                             data_source = c("sf1", "acs"),
                             year = 2013, period = 5,
                             api_key = NULL){
+
+  data_source <- match.arg(data_source)
+
+  if (any(stringr::str_sub(variables_to_get, -1, -1) %in% c("E", "M")) &
+      data_source != "acs") {
+    stop('Your variables look like ACS variables. You have specified, or the call has defaulted to, the decennial census. Set `data_source = "acs"` in the function call.')
+  }
 
   if(Sys.getenv("CENSUS_TOKEN") == "" && is.null(api_key)){
     stop("censusr requires an API key. Request one at http://api.census.gov/data/key_signup.html")
@@ -94,11 +102,11 @@ call_api_once <- function(variables_to_get, geoid, allgeos, data_source, year,
   # construct primary url depending on requested dataset
   if(data_source == "sf1"){
     # Census SF1 data
-    call_start <- "http://api.census.gov/data/2010/sf1?get="
+    call_start <- "https://api.census.gov/data/2010/sf1?get="
   } else if(data_source == "acs"){
     # ACS summary tables
     call_start <- paste(
-      "http://api.census.gov/data/", year,
+      "https://api.census.gov/data/", year,
       "/acs", period, "?get=", sep = ""
     )
   }
@@ -116,7 +124,9 @@ call_api_once <- function(variables_to_get, geoid, allgeos, data_source, year,
   url <- paste0(call_start, var_string, geo_string, api_string)
 
   # gives back a list of lists; convert to dataframe
-  response <- httr::content(httr::GET(url))
+  r <- httr::GET(url)
+  httr::stop_for_status(r)
+  response <- httr::content(r)
 
   df <- data.frame(t(sapply(response, c)), stringsAsFactors = F)[-1,]
   names(df) <- response[[1]]
